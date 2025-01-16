@@ -1,4 +1,4 @@
-import { faLightbulb, faClock } from "@fortawesome/free-solid-svg-icons";
+import { faLightbulb} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faDatabase,
@@ -6,7 +6,6 @@ import {
   faChartBar,
   faCogs,
   faEye,
-  faShieldAlt,
   faBell,
   faLayerGroup,
   faServer,
