@@ -107,7 +107,7 @@ const Features = () => (
           <div className="text-center">
             <FaFileAlt className="text-3xl text-[#FAF3E0] mx-auto mb-4" />
             <strong className="text-lg md:text-xl text-[#FAF3E0]">Exportación de Datos</strong>
-            <p className="text-[#FAF3E0] mt-2 text-lg">Exportación de datos a CSV o PDF.</p>
+            <p className="text-[#FAF3E0] mt-2 text-lg">Exportación de datos a CSV.</p>
           </div>
         </div>
 
