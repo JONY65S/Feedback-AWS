@@ -61,17 +61,7 @@
   },
   "storage": {
     "UserAuthStorage": {
-      "dependsOn": [
-        {
-          "attributes": [
-            "Name",
-            "Arn",
-            "LambdaExecutionRole"
-          ],
-          "category": "function",
-          "resourceName": "S3Triggerb4f8f787"
-        }
-      ],
+      "dependsOn": [],
       "providerPlugin": "awscloudformation",
       "service": "S3"
     }

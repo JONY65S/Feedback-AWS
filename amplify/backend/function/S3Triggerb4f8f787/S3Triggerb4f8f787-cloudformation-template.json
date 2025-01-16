@@ -1,7 +1,7 @@
 {
     "AWSTemplateFormatVersion": "2010-09-09",
     "Description": "Lambda resource stack creation using Amplify CLI",
-     "Parameters": {
+    "Parameters": {
         "env": {
             "Type": "String"
         }
@@ -18,43 +18,47 @@
     },
     "Resources": {
         "LambdaFunction": {
-          "Type": "AWS::Lambda::Function",
-          "Metadata": {
-            "aws:asset:path": "./src",
-            "aws:asset:property": "Code"
-          },
-          "Properties": {
-            "Handler": "index.handler",
-            "FunctionName": {
-                "Fn::If": [
-                    "ShouldNotCreateEnvResources",
-                    "S3Triggerb4f8f787",
-                    {
-
-                        "Fn::Join": [
-                            "",
-                            [
-                                "S3Triggerb4f8f787",
-                                "-",
-                                {
-                                    "Ref": "env"
-                                }
+            "Type": "AWS::Lambda::Function",
+            "Metadata": {
+                "aws:asset:path": "./src",
+                "aws:asset:property": "Code"
+            },
+            "Properties": {
+                "Handler": "index.handler",
+                "FunctionName": {
+                    "Fn::If": [
+                        "ShouldNotCreateEnvResources",
+                        "S3Triggerb4f8f787",
+                        {
+                            "Fn::Join": [
+                                "",
+                                [
+                                    "S3Triggerb4f8f787",
+                                    "-",
+                                    {
+                                        "Ref": "env"
+                                    }
+                                ]
                             ]
-                        ]
+                        }
+                    ]
+                },
+                "Environment": {
+                    "Variables": {
+                        "ENV": {
+                            "Ref": "env"
+                        }
                     }
-                ]
-            },
-            "Environment": {
-                "Variables" : {
-                    "ENV": {
-                        "Ref": "env"
-                    }
-                }
-            },
-            "Role": { "Fn::GetAtt" : ["LambdaExecutionRole", "Arn"] },
-            "Runtime": "nodejs18.x",
-            "Timeout": 25
-          }
+                },
+                "Role": {
+                    "Fn::GetAtt": [
+                        "LambdaExecutionRole",
+                        "Arn"
+                    ]
+                },
+                "Runtime": "nodejs18.x",
+                "Timeout": 25
+            }
         },
         "LambdaExecutionRole": {
             "Type": "AWS::IAM::Role",
@@ -64,7 +68,6 @@
                         "ShouldNotCreateEnvResources",
                         "S3Triggerb4f8f787LambdaRoleb4f8f787",
                         {
-
                             "Fn::Join": [
                                 "",
                                 [
@@ -95,22 +98,45 @@
                     ]
                 }
             }
-        }
-        ,"lambdaexecutionpolicy": {
-            "DependsOn": ["LambdaExecutionRole"],
+        },
+        "lambdaexecutionpolicy": {
+            "DependsOn": [
+                "LambdaExecutionRole"
+            ],
             "Type": "AWS::IAM::Policy",
             "Properties": {
                 "PolicyName": "lambda-execution-policy",
-                "Roles": [{ "Ref": "LambdaExecutionRole" }],
+                "Roles": [
+                    {
+                        "Ref": "LambdaExecutionRole"
+                    }
+                ],
                 "PolicyDocument": {
                     "Version": "2012-10-17",
                     "Statement": [
                         {
                             "Effect": "Allow",
-                            "Action":["logs:CreateLogGroup",
-                            "logs:CreateLogStream",
-                            "logs:PutLogEvents"],
-                            "Resource": { "Fn::Sub" : [ "arn:aws:logs:${region}:${account}:log-group:/aws/lambda/${lambda}:log-stream:*", { "region": {"Ref": "AWS::Region"},  "account": {"Ref": "AWS::AccountId"}, "lambda": {"Ref": "LambdaFunction"}} ]}
+                            "Action": [
+                                "logs:CreateLogGroup",
+                                "logs:CreateLogStream",
+                                "logs:PutLogEvents"
+                            ],
+                            "Resource": {
+                                "Fn::Sub": [
+                                    "arn:aws:logs:${region}:${account}:log-group:/aws/lambda/${lambda}:log-stream:*",
+                                    {
+                                        "region": {
+                                            "Ref": "AWS::Region"
+                                        },
+                                        "account": {
+                                            "Ref": "AWS::AccountId"
+                                        },
+                                        "lambda": {
+                                            "Ref": "LambdaFunction"
+                                        }
+                                    }
+                                ]
+                            }
                         }
                     ]
                 }
@@ -124,7 +150,12 @@
             }
         },
         "Arn": {
-            "Value": {"Fn::GetAtt": ["LambdaFunction", "Arn"]}
+            "Value": {
+                "Fn::GetAtt": [
+                    "LambdaFunction",
+                    "Arn"
+                ]
+            }
         },
         "Region": {
             "Value": {
