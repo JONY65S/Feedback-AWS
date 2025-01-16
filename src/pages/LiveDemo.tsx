@@ -34,7 +34,7 @@ const Navbar: React.FC = () => {
           </li>
           <li>
             <Link
-              to="live-demo"
+              to="#explorar"
               className="flex items-center text-white text-lg font-medium px-4 py-2 rounded-lg hover:bg-yellow-500 hover:text-gray-900 transition-all ease-in-out duration-300"
             >
               <FontAwesomeIcon icon={faPlayCircle} className="h-5 w-5 mr-2 text-gray-300 hover:text-white" />
@@ -43,7 +43,7 @@ const Navbar: React.FC = () => {
           </li>
           <li>
             <Link
-              to="insights"
+              to="#impacto"
               className="flex items-center text-white text-lg font-medium px-4 py-2 rounded-lg hover:bg-yellow-500 hover:text-gray-900 transition-all ease-in-out duration-300"
             >
               <FontAwesomeIcon icon={faUsers} className="h-5 w-5 mr-2 text-gray-300 hover:text-white" />
@@ -52,7 +52,7 @@ const Navbar: React.FC = () => {
           </li>
           <li>
             <Link
-              to="contact"
+              to="#conversa"
               className="flex items-center text-white text-lg font-medium px-4 py-2 rounded-lg hover:bg-yellow-500 hover:text-gray-900 transition-all ease-in-out duration-300"
             >
               <FontAwesomeIcon icon={faPhone} className="h-5 w-5 mr-2 text-gray-300 hover:text-white" />
