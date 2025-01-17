@@ -17,6 +17,9 @@
           "appId": "d128xz2gareddu",
           "type": "cicd"
         }
+      },
+      "auth": {
+        "insightful71f71637": {}
       }
     }
   }

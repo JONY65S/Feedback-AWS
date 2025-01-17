@@ -1,4 +1,32 @@
 {
+  "auth": {
+    "insightful71f71637": {
+      "customAuth": false,
+      "dependsOn": [],
+      "frontendAuthConfig": {
+        "mfaConfiguration": "OFF",
+        "mfaTypes": [
+          "SMS"
+        ],
+        "passwordProtectionSettings": {
+          "passwordPolicyCharacters": [],
+          "passwordPolicyMinLength": 8
+        },
+        "signupAttributes": [
+          "EMAIL"
+        ],
+        "socialProviders": [],
+        "usernameAttributes": [
+          "EMAIL"
+        ],
+        "verificationMechanisms": [
+          "EMAIL"
+        ]
+      },
+      "providerPlugin": "awscloudformation",
+      "service": "Cognito"
+    }
+  },
   "hosting": {
     "amplifyhosting": {
       "lastPushTimeStamp": "2025-01-17T00:10:48.792Z",
@@ -22,6 +50,13 @@
           "resourceName": "amplifyhosting"
         }
       ]
+    }
+  },
+  "storage": {
+    "AmplifyStorage": {
+      "dependsOn": [],
+      "providerPlugin": "awscloudformation",
+      "service": "S3"
     }
   }
 }
