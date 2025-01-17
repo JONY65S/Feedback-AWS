@@ -1,25 +1,22 @@
 {
   "dev": {
     "awscloudformation": {
-      "AuthRoleName": "amplify-insightful-dev-f6208-authRole",
-      "UnauthRoleArn": "arn:aws:iam::559050226865:role/amplify-insightful-dev-f6208-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::559050226865:role/amplify-insightful-dev-f6208-authRole",
+      "AuthRoleName": "amplify-insightful-dev-22203-authRole",
+      "UnauthRoleArn": "arn:aws:iam::559050226865:role/amplify-insightful-dev-22203-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::559050226865:role/amplify-insightful-dev-22203-authRole",
       "Region": "us-west-2",
-      "DeploymentBucketName": "amplify-insightful-dev-f6208-deployment",
-      "UnauthRoleName": "amplify-insightful-dev-f6208-unauthRole",
-      "StackName": "amplify-insightful-dev-f6208",
-      "StackId": "arn:aws:cloudformation:us-west-2:559050226865:stack/amplify-insightful-dev-f6208/9dd1fbe0-d43e-11ef-b81f-0a43e34c04ed",
-      "AmplifyAppId": "d1pdej0e6ho54o"
+      "DeploymentBucketName": "amplify-insightful-dev-22203-deployment",
+      "UnauthRoleName": "amplify-insightful-dev-22203-unauthRole",
+      "StackName": "amplify-insightful-dev-22203",
+      "StackId": "arn:aws:cloudformation:us-west-2:559050226865:stack/amplify-insightful-dev-22203/f9230f50-d463-11ef-a9ab-062251fb4eaf",
+      "AmplifyAppId": "d128xz2gareddu"
     },
     "categories": {
       "hosting": {
         "amplifyhosting": {
-          "appId": "d1pdej0e6ho54o",
+          "appId": "d128xz2gareddu",
           "type": "cicd"
         }
-      },
-      "auth": {
-        "insightfule5514bf8": {}
       }
     }
   }

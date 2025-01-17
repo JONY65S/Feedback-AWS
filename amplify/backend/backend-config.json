@@ -1,42 +1,7 @@
 {
-  "auth": {
-    "insightfule5514bf8": {
-      "customAuth": false,
-      "dependsOn": [],
-      "frontendAuthConfig": {
-        "mfaConfiguration": "OFF",
-        "mfaTypes": [
-          "SMS"
-        ],
-        "passwordProtectionSettings": {
-          "passwordPolicyCharacters": [],
-          "passwordPolicyMinLength": 8
-        },
-        "signupAttributes": [
-          "EMAIL"
-        ],
-        "socialProviders": [],
-        "usernameAttributes": [
-          "EMAIL"
-        ],
-        "verificationMechanisms": [
-          "EMAIL"
-        ]
-      },
-      "providerPlugin": "awscloudformation",
-      "service": "Cognito"
-    }
-  },
-  "function": {
-    "S3Triggerb4f8f787": {
-      "build": true,
-      "providerPlugin": "awscloudformation",
-      "service": "Lambda"
-    }
-  },
   "hosting": {
     "amplifyhosting": {
-      "lastPushTimeStamp": "2025-01-16T19:34:56.854Z",
+      "lastPushTimeStamp": "2025-01-17T00:10:48.792Z",
       "service": "amplifyhosting",
       "type": "cicd"
     }
@@ -57,13 +22,6 @@
           "resourceName": "amplifyhosting"
         }
       ]
-    }
-  },
-  "storage": {
-    "UserAuthStorage": {
-      "dependsOn": [],
-      "providerPlugin": "awscloudformation",
-      "service": "S3"
     }
   }
 }
