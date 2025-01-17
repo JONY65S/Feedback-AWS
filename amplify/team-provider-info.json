@@ -20,6 +20,9 @@
       },
       "auth": {
         "insightful71f71637": {}
+      },
+      "storage": {
+        "feedbackInsight": {}
       }
     }
   }

@@ -11,7 +11,7 @@ export type AmplifyDependentResourcesAttributes = {
     }
   },
   "storage": {
-    "AmplifyStorage": {
+    "feedbackInsight": {
       "BucketName": "string",
       "Region": "string"
     }
