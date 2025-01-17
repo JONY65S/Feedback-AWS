@@ -3,10 +3,8 @@ import ReactDOM from "react-dom/client";
 import './index.css'
 import App from './App.tsx'
 import { Amplify } from 'aws-amplify';
-import awsmobile from 'aws-exports';
-
-
-Amplify.configure(awsmobile);
+import amplifyconfig from './amplifyconfiguration.json';
+Amplify.configure(amplifyconfig);
 
 
 // Asegúrate de que esta línea esté presente y correcta
