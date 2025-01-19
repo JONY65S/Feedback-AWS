@@ -17,7 +17,7 @@ const LiveDemo = () => {
       return;
     }
 
-    const timestamp = new Date().toISOString().slice(0, -1); // Quitar la 'Z' del timestamp
+    const timestamp = new Date().toISOString(); // Timestamp en formato ISO
     const commentData = {
       comments: [
         {
@@ -34,7 +34,7 @@ const LiveDemo = () => {
       setIsUploading(true);
 
       // Subir el archivo JSON al bucket S3
-      const fileName = `comments/comment_${timestamp}.json`; // Nombre del archivo basado en la fecha y comentario
+      const fileName = `comments/comments_${timestamp}.json`; // Nombre del archivo basado en la fecha y comentario
       const result = await uploadData({
         path: fileName, // Ruta dentro del bucket
         data: new Blob([jsonData], { type: 'application/json' }), // Crear un Blob con los datos JSON
