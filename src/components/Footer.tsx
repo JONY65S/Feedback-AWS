@@ -3,7 +3,7 @@ import { faLinkedin } from "@fortawesome/free-brands-svg-icons";
 import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 
 const Footer: React.FC = () => (
-  <footer className="bg-gradient-to-r from-gray-900 via-gray-800 to-black text-white py-6 mt-12">
+  <footer className="bg-gradient-to-r from-gray-900 via-gray-800 to-black text-white py-6 ">
     <div className="max-w-screen-xl mx-auto px-8 md:px-16">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-center">
         {/* Logo y Descripción */}

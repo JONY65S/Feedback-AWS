@@ -8,22 +8,24 @@ import Features from "./pages/Features";
 import Contact from "./pages/Contact";
 import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
-
+import InsightFooter from "./components/InsightFooter"; // Agregar el segundo footer
 
 function App() {
   return (
     <Router>
       <Navbar />
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/live-demo" element={<Livedemo />} />
-        <Route path="/insights" element={<Insights />} />
-        <Route path="/features" element={<Features />} />
-        <Route path="/contact" element={<Contact />} />
+        <Route path="/" element={<><Home /><Footer /></>} />
+        <Route path="/live-demo" element={<><Livedemo /><Footer /></>} />
+        <Route path="/insights" element={<><Insights /><InsightFooter /></>} />
+        <Route path="/features" element={<><Features /><Footer /></>} />
+        <Route path="/contact" element={<><Contact /><Footer /></>} />
         {/* <Route path="/use-cases" element={<UseCases />} />
         <Route path="/about" element={<About />} />  */}
       </Routes>
-      <Footer />
+      
+      {/* Renderizar Footer principal en todas las páginas */}
+ 
     </Router>
   );
 }

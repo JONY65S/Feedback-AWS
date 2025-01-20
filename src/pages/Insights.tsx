@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import DashboardHeader from './../analytics/DashboardHeader';
 import Filters from './../analytics/Filters';
 import SummaryCards from './../analytics/SummaryCards';
-import SentimentCharts from './../analytics/SentimentCharts';
-import KeyInsights from './../analytics/KeyInsights';
-import ExportButton from './../analytics/ExportButton';
-import ChartTypeSelector from './../analytics/ChartTypeSelector';
+// import SentimentCharts from './../analytics/SentimentCharts';
+// import KeyInsights from './../analytics/KeyInsights';
+// import ExportButton from './../analytics/ExportButton';
+//import ChartTypeSelector from './../analytics/ChartTypeSelector';
 import CommentSummary from './../analytics/CommentSummary';
+import LiveDateTime from '../analytics/LiveDateTime';
 
 const Insights: React.FC = () => {
   // Datos de ejemplo
@@ -15,7 +16,7 @@ const Insights: React.FC = () => {
     sentimentDistribution: {
       positive: 20,
       neutral: 40,
-      negative: 60,
+      negative: 40,
     },
     keyComments: [
       { sentiment: 'positive', text: 'Great service and fast delivery!' },
@@ -26,21 +27,25 @@ const Insights: React.FC = () => {
       { positive: 4, negative: 2 }, // Día 2
       { positive: 6, negative: 0 }, // Día 3
       { positive: 6, negative: 8 }, // Día 4
-      { positive: 4, negative: 4 }, // Día 5
+      { positive: 5, negative: 4 }, // Día 5
+      { positive: 2, negative: 4 }, // Día 1
+      { positive: 4, negative: 2 }, // Día 2
     ],
   };
 
-  const [chartType, setChartType] = useState<string>('bar'); // Estado para el tipo de gráfico seleccionado
+  // const [chartType, setChartType] = useState<string>('bar'); // Estado para el tipo de gráfico seleccionado
+
+  // // Función para actualizar el tipo de gráfico seleccionado
+  // const handleChartTypeSelect = (type: string) => {
+  //   setChartType(type);
+  // };
 
   // Función para actualizar filtros
   const handleFilterChange = (key: string, value: string) => {
     console.log(`Filter ${key} updated with value: ${value}`);
   };
 
-  // Función para actualizar el tipo de gráfico seleccionado
-  const handleChartTypeSelect = (type: string) => {
-    setChartType(type);
-  };
+  
 
   // Función para calcular el comportamiento (0, 1, 2)
   const calculateBehavior = (data: { positive: number; negative: number }[]) => {
@@ -62,51 +67,74 @@ const Insights: React.FC = () => {
   // Calculamos el comportamiento con los datos de sentimentByDay
   const behaviorData = calculateBehavior(mockData.sentimentByDay);
 
-  return (
-    <div className="min-h-screen bg-gray-100 text-gray-900">
-      {/* Encabezado */}
-      <DashboardHeader />
+  useEffect(() => {
+    // Bloquear el scroll
+    document.body.style.overflow = 'hidden';
 
-      {/* Filtros */}
-      <div className="mt-4 mb-6 px-6">
-        <Filters onFilterChange={handleFilterChange} />
+    // Restaurar el scroll cuando el componente se desmonte
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-gray-100 text-gray-900 flex flex-col">
+      {/* Fijamos el DashboardHeader en la parte superior */}
+      <div className="sticky top-0 z-10 bg-gray-900 text-yellow-500">
+        <DashboardHeader />
       </div>
 
-      {/* Contenedor principal */}
-      <div className="container mx-auto px-6">
-        {/* Tarjetas de Resumen */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-          <SummaryCards
-            totalComments={mockData.totalComments}
-            sentimentScores={mockData.sentimentDistribution}
-          />
+      <div className="flex flex-grow">
+        {/* Sección izquierda fija */}
+        <div className="w-96 bg-gray-200 text-yellow-500 p-4 sticky top-16 h-screen overflow-y-auto"> {/* Barra lateral fija */}
+          <LiveDateTime />
+          <div className="mt-4">
+            <Filters onFilterChange={handleFilterChange} />
+          </div>
         </div>
 
-        {/* Resumen de Comentarios con gráfico */}
-        <div className="mb-6">
-          <CommentSummary
-            totalComments={mockData.totalComments}
-            sentimentData={mockData.sentimentByDay}
-            behaviorData={behaviorData} // Pasamos el comportamiento calculado
-          />
-        </div>
+        {/* Sección derecha ajustada a la pantalla */}
+        <div className="flex-1 p-6 h-screen overflow-hidden"> {/* h-screen asegura que la sección ocupe toda la pantalla */}
+          {/* Contenedor principal */}
+          <div className="container mx-auto px-6 w-full flex flex-col">
+            {/* Tarjetas de Resumen */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+              <SummaryCards
+                totalComments={mockData.totalComments}
+                sentimentScores={mockData.sentimentDistribution}
+              />
+            </div>
 
-        {/* Selector de tipo de gráfico */}
-        <ChartTypeSelector onSelect={handleChartTypeSelect} selectedType={chartType} />
+            {/* Resumen de Comentarios con gráfico */}
+            <div className="mb-6">
+              <CommentSummary
+                totalComments={mockData.totalComments}
+                sentimentData={mockData.sentimentByDay}
+                behaviorData={behaviorData} // Pasamos el comportamiento calculado
+              />
+            </div>
 
-        {/* Gráfico de Sentimientos */}
-        <div className="mb-6">
-          <SentimentCharts sentimentDistribution={mockData.sentimentDistribution} chartType={chartType} />
-        </div>
+            {/* Selector de tipo de gráfico */}
+            {/* <div className="mb-4">
+              <ChartTypeSelector onSelect={handleChartTypeSelect} selectedType={chartType} />
+            </div> */}
 
-        {/* Comentarios clave */}
-        <div className="mb-6">
-          <KeyInsights keyComments={mockData.keyComments} />
-        </div>
+            {/* Gráfico de Sentimientos */}
+            {/* <div className="mb-4 max-w-md mx-auto h-16"> 
+              <SentimentCharts sentimentDistribution={mockData.sentimentDistribution} chartType={chartType} />
+            </div> */}
 
-        {/* Botón de Exportación */}
-        <div className="flex justify-center mt-8">
-          <ExportButton />
+            {/* Comentarios clave */}
+            {/* <div className="mb-4">
+              <KeyInsights keyComments={mockData.keyComments} />
+            </div> */}
+
+            {/* Botón de Exportación */}
+            {/* <div className="flex justify-center mt-4">
+              <ExportButton />
+            </div> */}
+
+          </div>
         </div>
       </div>
     </div>
