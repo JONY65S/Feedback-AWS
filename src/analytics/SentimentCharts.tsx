@@ -54,6 +54,7 @@ const SentimentCharts: React.FC<SentimentChartsProps> = ({ sentimentDistribution
         fill: false,
         borderColor: '#4caf50',
         tension: 0.1,
+        borderWidth: 2, // Línea más delgada
         pointBackgroundColor: '#fff',
         pointBorderColor: '#4caf50',
       },
@@ -61,14 +62,15 @@ const SentimentCharts: React.FC<SentimentChartsProps> = ({ sentimentDistribution
   };
 
   return (
-    <div className="chart-container">
+    <div className="chart-container" style={{ width: '100%', height: '100%' }}>
       {/* Gráfico de Barras */}
       {chartType === 'bar' && (
-        <div className="mb-6">
+        <div className="mb-6" style={{ maxWidth: '100%', height: '400px' }}>
           <Bar
             data={chartData}
             options={{
               responsive: true,
+              maintainAspectRatio: false, // Asegura que el gráfico se ajuste al contenedor
               plugins: {
                 title: {
                   display: true,
@@ -82,11 +84,12 @@ const SentimentCharts: React.FC<SentimentChartsProps> = ({ sentimentDistribution
 
       {/* Gráfico de Líneas */}
       {chartType === 'line' && (
-        <div className="mb-6">
+        <div className="mb-6" style={{ maxWidth: '100%', height: '400px' }}>
           <Line
             data={lineChartData}
             options={{
               responsive: true,
+              maintainAspectRatio: false, // Asegura que el gráfico se ajuste al contenedor
               plugins: {
                 title: {
                   display: true,
@@ -100,11 +103,12 @@ const SentimentCharts: React.FC<SentimentChartsProps> = ({ sentimentDistribution
 
       {/* Gráfico de Pastel */}
       {chartType === 'pie' && (
-        <div className="mb-6">
+        <div className="mb-6" style={{ maxWidth: '100%', height: '400px' }}>
           <Pie
             data={chartData}
             options={{
               responsive: true,
+              maintainAspectRatio: false, // Asegura que el gráfico se ajuste al contenedor
               plugins: {
                 title: {
                   display: true,
