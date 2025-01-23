@@ -122,7 +122,7 @@ const Insights: React.FC = () => {
 
   useEffect(() => {
     // Bloquear el scroll
-    document.body.style.overflow = 'hidden';
+    // document.body.style.overflow = 'hidden';
 
     // Restaurar el scroll cuando el componente se desmonte
     return () => {
@@ -131,12 +131,19 @@ const Insights: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-100 text-gray-900 flex flex-col">
+    <div className="min-h-screen bg-gray-100 text-gray-900 flex flex-col ">
       {/* Fijamos el DashboardHeader en la parte superior */}
-      <div className="sticky top-0 z-10 bg-gray-900 text-yellow-500 flex justify-between items-center p-4">
+      <div className=" top-0 z-10 bg-gray-900 text-yellow-500 flex justify-between items-center p-4">
         {/* LiveDateTime a la izquierda */}
         <div className="flex-2">
           <LiveDateTime />
+        </div>
+        <div className='flex-3'>
+        <CommentSummary
+            totalComments={sentimentData.totalCommentsSem}
+            sentimentData={sentimentData.sentimentByDay}
+            behaviorData={behaviorData}
+          />
         </div>
 
         {/* SummaryCards en el centro */}
@@ -157,31 +164,22 @@ const Insights: React.FC = () => {
       <div className="flex flex-grow">
   <div className="flex-1 p-6 h-screen overflow-hidden">
     <div className="px-0 w-full h-full flex">
-
+      
       {/* Sección izquierda: CommentSummary y BubbleMap */}
-      <div className="flex flex-col w-1/3 h-full space-y-6">
-        <div className="flex-1">
-          <CommentSummary
-            totalComments={sentimentData.totalCommentsSem}
-            sentimentData={sentimentData.sentimentByDay}
-            behaviorData={behaviorData}
-          />
-        </div>
+      <div className="flex flex-col  h-full space-y-6">
         <div className="flex-1">
           <BubbleMap />
         </div>
+        <div className="flex-1"></div>
       </div>
 
       {/* Sección central: KeyInsights */}
-      <div className="flex-1 w-1/3 h-full">
+      <div className="flex-1 w-3/10 h-full">
         <KeyInsights />
       </div>
 
-      {/* Sección derecha: SankeyMap y AgeHistogram */}
-      <div className="flex flex-col w-1/3 h-full space-y-6">
-        <div className="flex-1">
-          <SankeyMap />
-        </div>
+      {/* Sección derecha: AgeHistogram */}
+      <div className="flex flex-col w-1/2 h-full space-y-6">
         <div className="flex-1">
           <AgeHistogram />
         </div>
@@ -190,6 +188,17 @@ const Insights: React.FC = () => {
     </div>
   </div>
 </div>
+
+{/* Sección para SankeyMap */}
+<div className="w-full flex justify-center items-center p-6">
+  <div className="w-full max-w-screen-xl">
+    <SankeyMap />
+  </div>
+</div>
+
+  
+
+
 
 
 

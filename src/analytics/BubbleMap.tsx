@@ -1,162 +1,129 @@
 import React, { useEffect, useState } from 'react';
 import Plot from 'react-plotly.js';
 import { fetchCommentsData } from '../components/ApiService';
+import { FaExpandAlt } from 'react-icons/fa';
 
-const BubbleMap: React.FC = () => {
-  const [bubbleData, setBubbleData] = useState<any>(null);
+const MapaDeBurbuja: React.FC = () => {
+  const [datosDeBurbuja, setDatosDeBurbuja] = useState<any>(null);
+  const [estaExpandido, setEstaExpandido] = useState(false);
 
   useEffect(() => {
-    const fetchBubbleData = async () => {
+    const obtenerDatosDeBurbuja = async () => {
       try {
         const data = await fetchCommentsData();
-        const wordCount: Record<string, number> = {};
+        const conteoDePalabras: Record<string, number> = {};
 
-        data.forEach((comment: any) => {
-          const recomendacionStr = comment.Recomendacion;
+        data.forEach((comentario: any) => {
+          const recomendacionStr = comentario.Recomendacion;
 
           if (recomendacionStr && recomendacionStr.startsWith('{')) {
             try {
               const recomendacion = JSON.parse(recomendacionStr);
-
-              if (recomendacion.positivo && Array.isArray(recomendacion.positivo)) {
-                recomendacion.positivo.forEach((word: string) => {
-                  if (wordCount[word]) {
-                    wordCount[word] += 1;
-                  } else {
-                    wordCount[word] = 1;
-                  }
-                });
-              }
+              recomendacion.positivo?.forEach((palabra: string) => {
+                conteoDePalabras[palabra] = (conteoDePalabras[palabra] || 0) + 1;
+              });
             } catch (error) {
-              console.error('Error parsing JSON:', error);
+              console.error('Error al analizar JSON:', error);
             }
           }
         });
 
-        const words = Object.keys(wordCount);
-        const frequencies = Object.values(wordCount);
-
-        setBubbleData({
-          words,
-          frequencies,
-        });
+        const palabras = Object.keys(conteoDePalabras);
+        const frecuencias = Object.values(conteoDePalabras);
+        setDatosDeBurbuja({ palabras, frecuencias });
       } catch (error) {
-        console.error('Error fetching data for Bubble Map:', error);
+        console.error('Error al obtener los datos:', error);
       }
     };
 
-    fetchBubbleData();
+    obtenerDatosDeBurbuja();
   }, []);
 
-  if (!bubbleData) {
-    return (
-      <div className="flex justify-center items-center min-h-screen bg-gradient-to-b from-blue-100 to-blue-300 text-gray-700">
-        <p className="text-lg font-semibold">Loading data...</p>
-      </div>
-    );
+  if (!datosDeBurbuja) {
+    return <div className="text-center text-gray-600">Cargando...</div>;
   }
 
-  const { words, frequencies } = bubbleData;
-  const maxFrequency = Math.max(...frequencies);
+  const { palabras, frecuencias } = datosDeBurbuja;
+  const maxFrecuencia = Math.max(...frecuencias);
 
-  const data = [
+  const datos = [
     {
       type: 'scatter',
       mode: 'markers',
-      x: words,
-      y: frequencies,
-      text: words,
+      x: palabras,
+      y: frecuencias,
+      text: palabras,
       marker: {
-        size: frequencies.map((f: number) => (f / maxFrequency) * 80),
-        color: frequencies,
-        colorscale: [
-          [0, '#ff6361'],
-          [0.5, '#ffa600'],
-          [1, '#bc5090'],
-        ], // Custom visible colors
-        opacity: 0.85,
-        line: {
-          width: 2,
-          color: '#333',
-        },
+        size: frecuencias.map((f: number) => (f / maxFrecuencia) * 60), // Tamaño reducido
+        color: frecuencias,
+        colorscale: 'YlGnBu',
+        opacity: 0.7,
+        line: { width: 1, color: '#ddd' },
       },
     },
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-blue-50 to-green-100 p-8">
-      <div className="max-w-6xl mx-auto bg-gradient-to-b from-green-200 to-blue-200 shadow-2xl rounded-xl p-8 border border-gray-200">
-        <h1 className="text-3xl font-bold text-gray-800 mb-6 text-left">
-          Bubble Map of Positive Words
-        </h1>
+    <div className="p-4 bg-gradient-to-r from-indigo-50 to-teal-50 rounded-lg shadow-lg mt-4 mx-auto w-full sm:w-full md:w-full lg:w-11/12">
+      <div className="relative">
+        <h1 className="text-2xl font-semibold text-gray-700 mb-3">Mapa de Burbuja de Palabras Positivas</h1>
+        <div className="absolute top-2 right-2 cursor-pointer" onClick={() => setEstaExpandido(!estaExpandido)}>
+          <FaExpandAlt className="text-gray-700 text-xl" />
+        </div>
 
-        {/* Bubble Chart */}
-        <div className="rounded-xl overflow-hidden p-6 shadow-lg">
+        <div
+          className={`overflow-hidden transition-all duration-300 rounded-lg border ${estaExpandido ? 'h-auto' : 'h-[140px]'}`}
+          style={{ backgroundColor: estaExpandido ? 'rgba(225, 240, 255, 0.8)' : 'rgba(233, 239, 240, 0.8)' }}
+        >
           <Plot
-            data={data as any}
+            data={datos as any}
             layout={{
-              title: {
-                text: 'Bubble Map of Positive Words',
-                x: 0, // Aligns to the top-left corner
-                xanchor: 'left',
-                font: {
-                  size: 20,
-                  color: '#333',
-                },
+              title: 'Mapa de Burbuja de Palabras Positivas',
+              height: estaExpandido ? 300 : 140,
+              xaxis: { 
+                title: 'Palabras', 
+                tickangle: 90, // Aumento de rotación de las etiquetas
+                tickmode: 'array', 
+                tickvals: palabras,
+                ticktext: palabras, 
               },
-              height: 500,
-              xaxis: {
-                title: 'Words',
-                tickangle: 45,
-              },
-              yaxis: {
-                title: 'Frequency',
-              },
-              font: {
-                family: 'Arial, sans-serif',
-                size: 14,
-                color: '#333',
-              },
-              paper_bgcolor: 'rgba(0,0,0,0)',
-              plot_bgcolor: 'rgba(255,255,255,0.9)',
-              margin: {
-                l: 50,
-                r: 50,
-                b: 50,
-                t: 50,
-                pad: 4,
-              },
+              yaxis: { title: 'Frecuencia' },
+              font: { size: 12, color: '#444' },
+              paper_bgcolor: 'transparent',
+              plot_bgcolor: 'rgba(255, 255, 255, 0.8)',
+              margin: { l: 10, r: 10, b: 50, t: 50 }, // Ajuste de márgenes
             }}
             useResizeHandler
             style={{ width: '100%' }}
           />
         </div>
 
-        {/* Table of Words and Frequencies */}
-        <div className="mt-8">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">Words and Frequencies</h2>
-          <div className="overflow-x-auto">
-            <table className="table-auto w-full border-collapse border border-gray-300 text-sm text-gray-800">
-              <thead>
-                <tr className="bg-blue-200 text-left">
-                  <th className="border border-gray-300 px-4 py-2">Word</th>
-                  <th className="border border-gray-300 px-4 py-2">Frequency</th>
-                </tr>
-              </thead>
-              <tbody>
-                {words.map((word: string, index: number) => (
-                  <tr key={index} className="hover:bg-blue-100">
-                    <td className="border border-gray-300 px-4 py-2">{word}</td>
-                    <td className="border border-gray-300 px-4 py-2">{frequencies[index]}</td>
+        {estaExpandido && (
+          <div className="mt-4">
+            <h2 className="text-lg font-semibold text-gray-700 mb-3">Palabras y Frecuencias</h2>
+            <div className="overflow-x-auto">
+              <table className="table-auto w-full border-collapse border border-gray-300 text-sm text-gray-800">
+                <thead>
+                  <tr className="bg-indigo-100 text-left">
+                    <th className="border border-gray-300 px-4 py-2">Palabra</th>
+                    <th className="border border-gray-300 px-4 py-2">Frecuencia</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {palabras.map((palabra: string, index: number) => (
+                    <tr key={index} className="hover:bg-indigo-50">
+                      <td className="border border-gray-300 px-4 py-2">{palabra}</td>
+                      <td className="border border-gray-300 px-4 py-2">{frecuencias[index]}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
 };
 
-export default BubbleMap;
+export default MapaDeBurbuja;

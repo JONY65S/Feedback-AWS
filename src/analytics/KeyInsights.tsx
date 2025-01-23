@@ -134,7 +134,7 @@ const KeyInsights: React.FC = () => {
   const { keyInsights, improvementPercentage, globalEstado } = insights;
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-teal-50 to-pink-100 p-8">
+    <div className="min-h-screen p-8">
       <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-xl p-8 border border-gray-200">
         {/* Título */}
         <h1 className="text-3xl font-semibold text-gray-800 mb-6 text-center">Key Insights</h1>
