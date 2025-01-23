@@ -14,7 +14,6 @@ interface SentimentByDay {
   negative: number;
 }
 
-
 const Insights: React.FC = () => {
   const [sentimentData, setSentimentData] = useState<{
     totalComments: number;
@@ -122,13 +121,43 @@ const Insights: React.FC = () => {
 
   useEffect(() => {
     // Bloquear el scroll
-    // document.body.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
 
     // Restaurar el scroll cuando el componente se desmonte
     return () => {
       document.body.style.overflow = '';
     };
   }, []);
+
+  // Función para exportar los datos a CSV
+  const exportToCSV = () => {
+    const header = [
+      'Fecha', 
+      'Comentarios Positivos', 
+      'Comentarios Negativos', 
+      'Comentarios Mixtos'
+    ];
+    
+    const rows = sentimentData.sentimentByDay.map((data, index) => [
+      `Día ${7 - index}`, // Día invertido
+      data.positive,
+      data.negative,
+      data.positive + data.negative, // Total de comentarios (sin contar mixtos)
+    ]);
+
+    let csvContent = 'data:text/csv;charset=utf-8,';
+    csvContent += header.join(',') + '\n';
+    rows.forEach(row => {
+      csvContent += row.join(',') + '\n';
+    });
+
+    // Crear un enlace de descarga
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', 'sentiment_data.csv');
+    link.click();
+  };
 
   return (
     <div className="min-h-screen bg-gray-100 text-gray-900 flex flex-col ">
@@ -156,54 +185,40 @@ const Insights: React.FC = () => {
 
         {/* Botón de exportar a la derecha */}
         <div className="ml-4">
-          <button className="bg-yellow-500 text-gray-900 px-4 py-2 rounded">Exportar</button>
+          <button className="bg-yellow-500 text-gray-900 px-4 py-2 rounded" onClick={exportToCSV}>
+            Exportar
+          </button>
         </div>
       </div>
 
-
+      {/* Resto del código */}
       <div className="flex flex-grow">
-  <div className="flex-1 p-6 h-screen overflow-hidden">
-    <div className="px-0 w-full h-full flex">
-      
-      {/* Sección izquierda: CommentSummary y BubbleMap */}
-      <div className="flex flex-col  h-full space-y-6">
-        <div className="flex-1">
-          <BubbleMap />
+        <div className="flex-1 p-6 overflow-hidden">
+          <div className="px-0 w-full h-full flex">
+            {/* Sección izquierda: CommentSummary y BubbleMap */}
+            <div className="flex flex-col h-full space-y-6">
+              <div className="flex-1">
+                <BubbleMap />
+              </div>
+            </div>
+
+            {/* Sección central: KeyInsights */}
+            <div className="flex-1 w-3/10 h-full flex flex-col gap-0.5">
+              <div className="w-full h-1/2">
+                <SankeyMap />
+                <AgeHistogram />
+              </div>
+            </div>
+
+            {/* Sección derecha: KeyInsights */}
+            <div className="flex flex-col w-1/2 h-full space-y-6">
+              <div className="flex-1">
+                <KeyInsights />
+              </div>
+            </div>
+          </div>
         </div>
-        <div className="flex-1"></div>
       </div>
-
-      {/* Sección central: KeyInsights */}
-      <div className="flex-1 w-3/10 h-full">
-        <KeyInsights />
-      </div>
-
-      {/* Sección derecha: AgeHistogram */}
-      <div className="flex flex-col w-1/2 h-full space-y-6">
-        <div className="flex-1">
-          <AgeHistogram />
-        </div>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-{/* Sección para SankeyMap */}
-<div className="w-full flex justify-center items-center p-6">
-  <div className="w-full max-w-screen-xl">
-    <SankeyMap />
-  </div>
-</div>
-
-  
-
-
-
-
-
-
-
     </div>
   );
 };

@@ -66,13 +66,14 @@ const AgeHistogram: React.FC = () => {
       title: 'Count',
     },
     bargap: 0.05,
+    height: 250, // Agregamos un height de 300px
   };
 
   return (
     <Plot
       data={data as any}
       layout={layout}
-      className="max-w-4xl mx-auto shadow-md rounded-lg" // Bordes redondeados aquí
+      className="w-[700px] mx-auto shadow-md rounded-lg" // Ajustamos el ancho a 700px
     />
   );
 };

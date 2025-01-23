@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import Plot from 'react-plotly.js';
 import { fetchCommentsData } from '../components/ApiService';
 
-// Definimos el tipo de datos esperado para el Sankey
 interface SankeyData {
   countries: string[];
   states: string[];
@@ -16,15 +15,14 @@ const SankeyMap: React.FC = () => {
   useEffect(() => {
     const fetchSankeyData = async () => {
       try {
-        const data = await fetchCommentsData(); // Asumimos que fetchCommentsData ahora obtiene datos para Sankey
+        const data = await fetchCommentsData();
         const countries: string[] = [];
         const states: string[] = [];
         const cities: string[] = [];
         const links: { source: number; target: number; value: number }[] = [];
 
-        // Creamos un mapa para relacionar los estados con sus países y las ciudades con sus estados
-        const countryStateMap: Record<string, string[]> = {}; // País -> estados
-        const stateCityMap: Record<string, string[]> = {}; // Estado -> ciudades
+        const countryStateMap: Record<string, string[]> = {}; 
+        const stateCityMap: Record<string, string[]> = {}; 
 
         data.forEach((comment: any) => {
           const country = comment.Pais;
@@ -35,30 +33,27 @@ const SankeyMap: React.FC = () => {
           if (!states.includes(state)) states.push(state);
           if (!cities.includes(city)) cities.push(city);
 
-          // Asignamos los estados a los países
           if (!countryStateMap[country]) countryStateMap[country] = [];
           if (!countryStateMap[country].includes(state)) {
             countryStateMap[country].push(state);
           }
 
-          // Asignamos las ciudades a los estados
           if (!stateCityMap[state]) stateCityMap[state] = [];
           if (!stateCityMap[state].includes(city)) {
             stateCityMap[state].push(city);
           }
         });
 
-        // Creamos los enlaces entre los países, los estados y las ciudades
         countries.forEach((country, countryIndex) => {
           const countryStates = countryStateMap[country];
           countryStates.forEach((state) => {
-            const stateIndex = states.indexOf(state); // Usamos stateIndex para los estados
+            const stateIndex = states.indexOf(state);
             const stateCities = stateCityMap[state];
             stateCities.forEach((city) => {
-              const cityIndex = cities.indexOf(city); // Usamos cityIndex para las ciudades
+              const cityIndex = cities.indexOf(city);
               links.push(
-                { source: countryIndex, target: countries.length + stateIndex, value: 1 }, // país -> estado
-                { source: countries.length + stateIndex, target: countries.length + states.length + cityIndex, value: 1 } // estado -> ciudad
+                { source: countryIndex, target: countries.length + stateIndex, value: 1 },
+                { source: countries.length + stateIndex, target: countries.length + states.length + cityIndex, value: 1 }
               );
             });
           });
@@ -84,10 +79,9 @@ const SankeyMap: React.FC = () => {
 
   const { countries, states, cities, links } = sankeyData;
 
-  // Configuración de los datos para el gráfico de Sankey
   const data = [
     {
-      type: 'sankey' as const, // Especificamos que el tipo es "sankey"
+      type: 'sankey' as const,
       node: {
         pad: 15,
         thickness: 20,
@@ -95,7 +89,7 @@ const SankeyMap: React.FC = () => {
           color: 'black',
           width: 0.5,
         },
-        label: [...countries, ...states, ...cities], // Concatenamos los países, estados y ciudades
+        label: [...countries, ...states, ...cities],
       },
       link: {
         source: links.map((link) => link.source),
@@ -105,9 +99,15 @@ const SankeyMap: React.FC = () => {
     },
   ];
 
+  const layout = {
+    title: 'Sankey Diagram of Countries, States, and Cities',
+    height: 400, // Definimos la altura del gráfico de Sankey
+    width: 700,  // Aseguramos que tenga el ancho que deseas
+  };
+
   return (
     <div className="sankey-map-container">
-      <Plot data={data} layout={{ title: 'Sankey Diagram of Countries, States, and Cities' }} />
+      <Plot data={data} layout={layout} />
     </div>
   );
 };
