@@ -10,9 +10,11 @@ const Features = () => (
           Aquí irá el diagrama de arquitectura cuando esté listo.
         </p>
         {/* Espacio para el diagrama */}
-        <div className="w-full h-64 bg-[#EAECEE] mt-6 rounded-lg">
-          {/* Puedes reemplazar este div con tu diagrama cuando esté listo */}
-        </div>
+<div className="w-full h-72 bg-[#EAECEE] mt-6 rounded-lg flex justify-center items-center">
+  {/* Imagen de ejemplo dentro del div */}
+  <img src="./arq.png" alt="Diagrama de arquitectura" className="max-w-full h-64 rounded-lg" />
+</div>
+
       </div>
 
       {/* Sección de Funcionalidades Clave */}
