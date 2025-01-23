@@ -9,6 +9,7 @@ import Contact from "./pages/Contact";
 import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 import InsightFooter from "./components/InsightFooter"; // Agregar el segundo footer
+import Test from "./pages/Test";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="/insights" element={<><Insights /><InsightFooter /></>} />
         <Route path="/features" element={<><Features /><Footer /></>} />
         <Route path="/contact" element={<><Contact /><Footer /></>} />
+        <Route path="/0" element={<><Test /><Footer /></>} />
         {/* <Route path="/use-cases" element={<UseCases />} />
         <Route path="/about" element={<About />} />  */}
       </Routes>

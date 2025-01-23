@@ -1,43 +1,60 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { uploadData } from 'aws-amplify/storage';
 import { v4 as uuidv4 } from 'uuid';
 
 const LiveDemo = () => {
   const [comment, setComment] = useState('');
   const [edad, setEdad] = useState('');
-  const [estado, setEstado] = useState('');
-  const [pais, setPais] = useState('');
-  const [municipio, setMunicipio] = useState('');
+  const [selectedCountry, setSelectedCountry] = useState(null);
+  const [selectedState, setSelectedState] = useState(null);
+  const [selectedCity, setSelectedCity] = useState(null);
+  const [countries, setCountries] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
-  const [notification, setNotification] = useState({
-    message: '',
-    type: '', // 'success' or 'error'
-  });
+  const [notification, setNotification] = useState({ message: '', type: '' });
 
-  const handleCommentChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  useEffect(() => {
+    // Simulación de carga de datos de país, estado y ciudad
+    const loadCountries = async () => {
+      const response = await fetch('/country.json');
+      const data = await response.json();
+      setCountries(data);
+    };
+    loadCountries();
+  }, []);
+
+  const handleCommentChange = (event) => {
     setComment(event.target.value);
   };
 
-  const handleEdadChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleEdadChange = (event) => {
     setEdad(event.target.value);
   };
 
-  const handleEstadoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setEstado(event.target.value);
+  const handleCountryChange = (event) => {
+    const countryId = parseInt(event.target.value, 10);
+    const country = countries.find((c) => c.id === countryId);
+    setSelectedCountry(country || null);
+    setSelectedState(null);
+    setSelectedCity(null);
   };
 
-  const handlePaisChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setPais(event.target.value);
+  const handleStateChange = (event) => {
+    const stateId = parseInt(event.target.value, 10);
+    const state = selectedCountry?.states.find((s) => s.id === stateId);
+    setSelectedState(state || null);
+    setSelectedCity(null);
   };
 
-  const handleMunicipioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setMunicipio(event.target.value);
+  const handleCityChange = (event) => {
+    const cityId = parseInt(event.target.value, 10);
+    const city = selectedState?.cities.find((c) => c.id === cityId);
+    setSelectedCity(city || null);
   };
 
-  const handleSubmit = async (event: React.FormEvent) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (!comment || !edad || !estado || !pais || !municipio) {
+    if (!comment || !edad || !selectedCountry || !selectedState || !selectedCity) {
       setNotification({ message: 'Por favor complete todos los campos.', type: 'error' });
       return;
     }
@@ -50,9 +67,9 @@ const LiveDemo = () => {
           comment,
           timestamp,
           edad,
-          estado,
-          pais,
-          municipio,
+          pais: selectedCountry.name,
+          estado: selectedState.name,
+          ciudad: selectedCity.name,
         },
       ],
     };
@@ -61,7 +78,6 @@ const LiveDemo = () => {
 
     try {
       setIsUploading(true);
-
       const uniqueFolio = uuidv4();
       const fileName = `comments/${uniqueFolio}.json`;
 
@@ -81,56 +97,84 @@ const LiveDemo = () => {
   };
 
   return (
-    <div className="bg-[#FAF3E0]  py-6 h-screen flex justify-center items-center">
-
+    <div className="bg-[#FAF3E0] py-6 h-screen flex justify-center items-center">
       <div className="max-w-lg mx-auto p-8 bg-gray-900 rounded-xl shadow-xl">
         <h2 className="text-3xl font-bold text-center text-yellow-500 mb-6">¡Déjanos tu Comentario!</h2>
-
         <form onSubmit={handleSubmit} className="space-y-6">
-          <input
-            type="text"
-            placeholder="Escribe tu comentario"
-            value={comment}
-            onChange={handleCommentChange}
-            required
-            className="w-full p-4 border-2 border-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-800"
-          />
-          <div className="grid grid-cols-2 gap-4">
-            <input
-              type="text"
-              placeholder="Edad"
+          <div>
+            <label htmlFor="edad" className="block text-white mb-1">Selecciona tu edad:</label>
+            <select
+              id="edad"
               value={edad}
               onChange={handleEdadChange}
-              required
               className="w-full p-4 border-2 border-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-800"
-            />
-            <input
-              type="text"
-              placeholder="Estado"
-              value={estado}
-              onChange={handleEstadoChange}
+            >
+              <option value="">-- Selecciona tu edad --</option>
+              {Array.from({ length: 100 }, (_, i) => i + 1).map((age) => (
+                <option key={age} value={age}>{age}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label htmlFor="country" className="block text-white mb-1">Selecciona tu país:</label>
+            <select
+              id="country"
+              onChange={handleCountryChange}
+              className="w-full p-4 border-2 border-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-800"
+            >
+              <option value="">-- Selecciona País --</option>
+              {countries.map((country) => (
+                <option key={country.id} value={country.id}>{country.name}</option>
+              ))}
+            </select>
+          </div>
+
+          {selectedCountry && (
+            <div>
+              <label htmlFor="state" className="block text-white mb-1">Selecciona tu estado:</label>
+              <select
+                id="state"
+                onChange={handleStateChange}
+                className="w-full p-4 border-2 border-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-800"
+              >
+                <option value="">-- Selecciona Estado --</option>
+                {selectedCountry.states.map((state) => (
+                  <option key={state.id} value={state.id}>{state.name}</option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          {selectedState && (
+            <div>
+              <label htmlFor="city" className="block text-white mb-1">Selecciona tu ciudad:</label>
+              <select
+                id="city"
+                onChange={handleCityChange}
+                className="w-full p-4 border-2 border-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-800"
+              >
+                <option value="">-- Selecciona Ciudad --</option>
+                {selectedState.cities.map((city) => (
+                  <option key={city.id} value={city.id}>{city.name}</option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          <div>
+            <label htmlFor="comment" className="block text-white mb-1">Escribe tu comentario:</label>
+            <textarea
+              id="comment"
+              placeholder="Escribe tu comentario"
+              value={comment}
+              onChange={handleCommentChange}
               required
+              rows={5}
               className="w-full p-4 border-2 border-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-800"
             />
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            <input
-              type="text"
-              placeholder="País"
-              value={pais}
-              onChange={handlePaisChange}
-              required
-              className="w-full p-4 border-2 border-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-800"
-            />
-            <input
-              type="text"
-              placeholder="Municipio"
-              value={municipio}
-              onChange={handleMunicipioChange}
-              required
-              className="w-full p-4 border-2 border-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-800"
-            />
-          </div>
+
           <button
             type="submit"
             disabled={isUploading}
@@ -142,7 +186,6 @@ const LiveDemo = () => {
           </button>
         </form>
 
-        {/* Toast Notification */}
         {notification.message && (
           <div
             className={`fixed top-5 left-1/2 transform -translate-x-1/2 w-96 p-4 rounded-lg shadow-lg transition-all duration-300 ease-in-out ${
