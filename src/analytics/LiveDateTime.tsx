@@ -14,12 +14,12 @@ const LiveGreeting: React.FC = () => {
   }, [utcOffset]);
 
   const formatGreeting = () => {
-    const hour = currentTime.getUTCHours();
-    if (hour < 12) return '¡Buenos días!';
-    if (hour < 18) return '¡Buenas tardes!';
-    return '¡Buenas noches!';
+    const currentTime = new Date(); // Asegúrate de definir esto
+    const hour = currentTime.getUTCHours(); // Cambiar a getHours() si prefieres hora local
+    if (hour < 12) return '¡Buenos noches!';
+    if (hour < 18) return '¡Buenas días!';
+    return '¡Buenas tardes!';
   };
-
   const formatDate = () =>
     currentTime.toLocaleDateString('es-MX', {
       weekday: 'long',
