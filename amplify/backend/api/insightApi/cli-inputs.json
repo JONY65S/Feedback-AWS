@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "paths": {
+    "/comments": {
+      "name": "/comments",
+      "lambdaFunction": "insightful3ac51b30",
+      "permissions": {
+        "setting": "open"
+      }
+    }
+  }
+}

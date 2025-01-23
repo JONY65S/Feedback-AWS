@@ -1,5 +1,20 @@
 {
-  "api": {},
+  "api": {
+    "insightApi": {
+      "dependsOn": [
+        {
+          "attributes": [
+            "Name",
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "insightful3ac51b30"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "API Gateway"
+    }
+  },
   "auth": {
     "insightful71f71637": {
       "customAuth": false,
@@ -28,6 +43,27 @@
       "service": "Cognito"
     }
   },
+  "function": {
+    "insightful3ac51b30": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributeEnvMap": {
+            "Arn": "TABLE_ARN",
+            "Name": "TABLE_NAME"
+          },
+          "attributes": [
+            "Name",
+            "Arn"
+          ],
+          "category": "storage",
+          "resourceName": "insightDB"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    }
+  },
   "hosting": {
     "amplifyhosting": {
       "lastPushTimeStamp": "2025-01-17T00:10:48.792Z",
@@ -36,6 +72,22 @@
     }
   },
   "parameters": {
+    "AMPLIFY_function_insightful3ac51b30_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "insightful3ac51b30"
+        }
+      ]
+    },
+    "AMPLIFY_function_insightful3ac51b30_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "insightful3ac51b30"
+        }
+      ]
+    },
     "AMPLIFY_hosting_amplifyhosting_appId": {
       "usedBy": [
         {
@@ -58,6 +110,10 @@
       "dependsOn": [],
       "providerPlugin": "awscloudformation",
       "service": "S3"
+    },
+    "insightDB": {
+      "providerPlugin": "awscloudformation",
+      "service": "DynamoDB"
     }
   }
 }

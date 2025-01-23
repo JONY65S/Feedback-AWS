@@ -1,0 +1,14 @@
+{
+  "resourceName": "insightDB",
+  "tableName": "insightDB",
+  "partitionKey": {
+    "fieldName": "ComentarioID",
+    "fieldType": "string"
+  },
+  "sortKey": {
+    "fieldName": "Timestamp",
+    "fieldType": "string"
+  },
+  "gsi": [],
+  "triggerFunctions": []
+}

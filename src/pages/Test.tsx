@@ -1,112 +1,72 @@
-import React, { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 
-// Definimos las interfaces de los datos
-interface City {
-  id: number;
-  name: string;
-}
+const CommentsTestComponent = () => {
+  // Estado para manejar los comentarios, error y el estado de carga
+  const [comments, setComments] = useState<any[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-interface State {
-  id: number;
-  name: string;
-  cities: City[];
-}
+  // Esta función se encargará de realizar la solicitud GET
+  const fetchComments = async () => {
+    setIsLoading(true); // Inicia el estado de carga
+    setError(null); // Resetea cualquier error previo
 
-interface Country {
-  id: number;
-  name: string;
-  states: State[];
-}
+    try {
+      // Realiza la solicitud GET al endpoint de tu API
+      const response = await axios.get(
+        'https://jb03bfcn34.execute-api.us-west-2.amazonaws.com/dev/comments'
+      );
 
-const CountryStateCityDemo = () => {
-  const [countries, setCountries] = useState<Country[]>([]);
-  const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
-  const [selectedState, setSelectedState] = useState<State | null>(null);
-  const [selectedCity, setSelectedCity] = useState<City | null>(null);
+      // Guarda los datos de los comentarios en el estado
+      setComments(response.data);
+    } catch (err) {
+      // Si hay un error, lo mostramos
+      setError('Error fetching data');
+    } finally {
+      // Finaliza el estado de carga
+      setIsLoading(false);
+    }
+  };
 
-  // Cargar los datos desde el archivo JSON o API
+  // Usamos useEffect para llamar a la función fetchComments cuando el componente se monte
   useEffect(() => {
-    // Puedes reemplazar esta URL con la URL de tu API si es necesario
-    const loadCountries = async () => {
-      const response = await fetch('/country.json');
-      const data = await response.json();
-      setCountries(data);
-    };
-
-    loadCountries();
-  }, []);
-
-  // Manejo de cambios en las selecciones
-  const handleCountryChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const countryId = parseInt(event.target.value, 10);
-    const country = countries.find((c) => c.id === countryId);
-    setSelectedCountry(country || null);
-    setSelectedState(null); // Resetear estado y ciudad al cambiar el país
-    setSelectedCity(null);
-  };
-
-  const handleStateChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const stateId = parseInt(event.target.value, 10);
-    const state = selectedCountry?.states.find((s) => s.id === stateId);
-    setSelectedState(state || null);
-    setSelectedCity(null); // Resetear ciudad al cambiar el estado
-  };
-
-  const handleCityChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const cityId = parseInt(event.target.value, 10);
-    const city = selectedState?.cities.find((c) => c.id === cityId);
-    setSelectedCity(city || null);
-  };
+    fetchComments();
+  }, []); // El array vacío asegura que la llamada solo se realice una vez
 
   return (
-    <div className="space-y-4">
-      <div>
-        <label htmlFor="country" className="block">Select Country:</label>
-        <select id="country" onChange={handleCountryChange} className="w-full p-2 border border-gray-300">
-          <option value="">-- Select Country --</option>
-          {countries.map((country) => (
-            <option key={country.id} value={country.id}>
-              {country.name}
-            </option>
+    <div>
+      <h2>Comentarios:</h2>
+      
+      {/* Botón para forzar la solicitud GET */}
+      <button onClick={fetchComments}>Cargar Comentarios</button>
+
+      {/* Muestra el estado de carga */}
+      {isLoading && <p>Cargando...</p>}
+
+      {/* Muestra los posibles errores */}
+      {error && <p>{error}</p>}
+
+      {/* Muestra la lista de comentarios si existen */}
+      {comments.length > 0 && (
+        <ul>
+          {comments.map((comment: any, index: number) => (
+            <li key={index}>
+              <strong>Comentario:</strong> {comment.ComentarioTexto} <br />
+              <strong>Edad:</strong> {comment.Edad} <br />
+              <strong>Recomendacion:</strong> {comment.Recomendacion} <br />
+              <strong>Sentimiento:</strong> {comment.Sentiment} <br />
+              <strong>Sentiment Score:</strong> {comment.SentimentScore} <br />
+              <strong>Pais:</strong> {comment.Pais} <br />
+              <strong>Estado:</strong> {comment.Estado} <br />
+              <strong>Ciudad:</strong> {comment.Ciudad} <br />
+              <strong>Timestamp:</strong> {comment.Timestamp} <br /><br /><br />
+            </li>
           ))}
-        </select>
-      </div>
-
-      {selectedCountry && (
-        <div>
-          <label htmlFor="state" className="block">Select State:</label>
-          <select id="state" onChange={handleStateChange} className="w-full p-2 border border-gray-300">
-            <option value="">-- Select State --</option>
-            {selectedCountry.states.map((state) => (
-              <option key={state.id} value={state.id}>
-                {state.name}
-              </option>
-            ))}
-          </select>
-        </div>
-      )}
-
-      {selectedState && (
-        <div>
-          <label htmlFor="city" className="block">Select City:</label>
-          <select id="city" onChange={handleCityChange} className="w-full p-2 border border-gray-300">
-            <option value="">-- Select City --</option>
-            {selectedState.cities.map((city) => (
-              <option key={city.id} value={city.id}>
-                {city.name}
-              </option>
-            ))}
-          </select>
-        </div>
-      )}
-
-      {selectedCity && (
-        <div>
-          <p>You selected: {selectedCity.name}, {selectedState?.name}, {selectedCountry?.name}</p>
-        </div>
+        </ul>
       )}
     </div>
   );
 };
 
-export default CountryStateCityDemo;
+export default CommentsTestComponent;

@@ -22,7 +22,17 @@
         "insightful71f71637": {}
       },
       "storage": {
-        "feedbackInsight": {}
+        "feedbackInsight": {},
+        "insightDB": {}
+      },
+      "function": {
+        "insightful3ac51b30": {
+          "deploymentBucketName": "amplify-insightful-dev-22203-deployment",
+          "s3Key": "amplify-builds/insightful3ac51b30-504e4a75306664757a44-build.zip"
+        }
+      },
+      "api": {
+        "insightApi": {}
       }
     }
   }
