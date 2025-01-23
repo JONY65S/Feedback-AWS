@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import DashboardHeader from './../analytics/DashboardHeader';
 import Filters from './../analytics/Filters';
 import SummaryCards from './../analytics/SummaryCards';
@@ -8,29 +8,125 @@ import SummaryCards from './../analytics/SummaryCards';
 //import ChartTypeSelector from './../analytics/ChartTypeSelector';
 import CommentSummary from './../analytics/CommentSummary';
 import LiveDateTime from '../analytics/LiveDateTime';
+import { fetchCommentsData } from '../components/ApiService';
+
+// const Insights: React.FC = () => {
+//   // Datos de ejemplo
+//   const mockData = {
+//     totalComments: 120,
+//     sentimentDistribution: {
+//       positive: 20,
+//       neutral: 40,
+//       negative: 40,
+//     },
+//     keyComments: [
+//       { sentiment: 'positive', text: 'Great service and fast delivery!' },
+//       { sentiment: 'negative', text: 'Delivery time was way too long.' },
+//     ],
+//     sentimentByDay: [
+//       { positive: 2, negative: 4 }, // Día 1
+//       { positive: 4, negative: 2 }, // Día 2
+//       { positive: 6, negative: 0 }, // Día 3
+//       { positive: 6, negative: 8 }, // Día 4
+//       { positive: 5, negative: 4 }, // Día 5
+//       { positive: 2, negative: 4 }, // Día 1
+//       { positive: 4, negative: 2 }, // Día 2
+//     ],
+
+    
+//   };
+
+/// Definimos el tipo para SentimentByDay
+// Definimos el tipo para SentimentByDay
+interface SentimentByDay {
+  positive: number;
+  negative: number;
+}
 
 const Insights: React.FC = () => {
-  // Datos de ejemplo
-  const mockData = {
-    totalComments: 120,
+  const [sentimentData, setSentimentData] = useState<{
+    totalComments: number;
+    totalCommentsSem: number;
     sentimentDistribution: {
-      positive: 20,
-      neutral: 40,
-      negative: 40,
+      positive: number;
+      negative: number;
+      mixed: number;
+    };
+    sentimentByDay: SentimentByDay[]; // Tipamos correctamente sentimentByDay
+  }>({
+    totalComments: 0,
+    totalCommentsSem: 0,
+    sentimentDistribution: {
+      positive: 0,
+      negative: 0,
+      mixed: 0,
     },
-    keyComments: [
-      { sentiment: 'positive', text: 'Great service and fast delivery!' },
-      { sentiment: 'negative', text: 'Delivery time was way too long.' },
-    ],
-    sentimentByDay: [
-      { positive: 2, negative: 4 }, // Día 1
-      { positive: 4, negative: 2 }, // Día 2
-      { positive: 6, negative: 0 }, // Día 3
-      { positive: 6, negative: 8 }, // Día 4
-      { positive: 5, negative: 4 }, // Día 5
-      { positive: 2, negative: 4 }, // Día 1
-      { positive: 4, negative: 2 }, // Día 2
-    ],
+    sentimentByDay: [], // Inicializamos como un array vacío
+  });
+
+  useEffect(() => {
+    const getCommentsData = async () => {
+      try {
+        const commentsData = await fetchCommentsData();
+
+        let positive = 0;
+        let negative = 0;
+        let mixed = 0;
+
+        // Creamos un array con 7 días inicializados en 0
+        const sentimentByDay: SentimentByDay[] = Array.from({ length: 7 }, () => ({
+          positive: 0,
+          negative: 0,
+        }));
+
+        // Agrupamos los comentarios por sentimiento y día
+        commentsData.forEach((comment: any) => {
+          const sentiment = comment.Sentiment.toLowerCase();
+          const timestamp = comment.Timestamp;
+          const date = new Date(timestamp);
+          const dayIndex = getReversedDayIndex(date); // Obtener el índice del día invertido
+
+          if (dayIndex >= 0 && dayIndex < 7) {
+            // Sumamos los sentimientos en el día correspondiente
+            if (sentiment === 'positive') sentimentByDay[dayIndex].positive++;
+            if (sentiment === 'negative') sentimentByDay[dayIndex].negative++;
+          }
+
+          // Contamos los sentimientos totales para la distribución general
+          if (sentiment === 'positive') positive++;
+          else if (sentiment === 'negative') negative++;
+          else if (sentiment === 'neutral' || sentiment === 'mixed') mixed++;
+        });
+
+        // Calcular el total de comentarios
+        const totalComments = positive + negative + mixed;
+        const totalCommentsSem = positive + negative;
+
+        setSentimentData({
+          totalComments,
+          totalCommentsSem,
+          sentimentDistribution: {
+            positive,
+            negative,
+            mixed,
+          },
+          sentimentByDay, // Actualizamos los datos de sentimentByDay
+        });
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    getCommentsData();
+  }, []);
+
+
+   // Función para invertir los días: Día 0 = más reciente, Día 6 = hace 6 días
+   const getReversedDayIndex = (date: Date) => {
+    const today = new Date();
+    const diffTime = today.getTime() - date.getTime();
+    const diffDays = Math.floor(diffTime / (1000 * 3600 * 24)); // Calculamos los días de diferencia
+    return 6 - diffDays; // Invertimos el índice (6 = hoy, 5 = ayer, etc.)
   };
 
   // const [chartType, setChartType] = useState<string>('bar'); // Estado para el tipo de gráfico seleccionado
@@ -65,7 +161,7 @@ const Insights: React.FC = () => {
   };
 
   // Calculamos el comportamiento con los datos de sentimentByDay
-  const behaviorData = calculateBehavior(mockData.sentimentByDay);
+  const behaviorData = calculateBehavior(sentimentData.sentimentByDay);
 
   useEffect(() => {
     // Bloquear el scroll
@@ -100,18 +196,19 @@ const Insights: React.FC = () => {
             {/* Tarjetas de Resumen */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
               <SummaryCards
-                totalComments={mockData.totalComments}
-                sentimentScores={mockData.sentimentDistribution}
+                totalComments={sentimentData.totalComments}
+                sentimentScores={sentimentData.sentimentDistribution}
               />
             </div>
 
-            {/* Resumen de Comentarios con gráfico */}
+             {/*Resumen de Comentarios con gráfico*/}
             <div className="mb-6">
               <CommentSummary
-                totalComments={mockData.totalComments}
-                sentimentData={mockData.sentimentByDay}
-                behaviorData={behaviorData} // Pasamos el comportamiento calculado
+                totalComments={sentimentData.totalCommentsSem}
+                sentimentData={sentimentData.sentimentByDay}
+                behaviorData={behaviorData}// Pasamos el comportamiento calculado
               />
+   
             </div>
 
             {/* Selector de tipo de gráfico */}
