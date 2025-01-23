@@ -9,7 +9,7 @@ interface SummaryCardsProps {
 
 const SummaryCards: React.FC<SummaryCardsProps> = ({ totalComments, sentimentScores }) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 my-6">
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 my-2">
       <div className="bg-white shadow-md rounded p-4 text-center">
         <FontAwesomeIcon icon={faComments} size="2x" className="text-blue-500" />
         <h3 className="text-lg font-bold mt-2">Total Comments</h3>
@@ -35,3 +35,5 @@ const SummaryCards: React.FC<SummaryCardsProps> = ({ totalComments, sentimentSco
 };
 
 export default SummaryCards;
+
+

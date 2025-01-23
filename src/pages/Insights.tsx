@@ -1,47 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import DashboardHeader from './../analytics/DashboardHeader';
-import Filters from './../analytics/Filters';
 import SummaryCards from './../analytics/SummaryCards';
-// import SentimentCharts from './../analytics/SentimentCharts';
-// import KeyInsights from './../analytics/KeyInsights';
-// import ExportButton from './../analytics/ExportButton';
-//import ChartTypeSelector from './../analytics/ChartTypeSelector';
 import CommentSummary from './../analytics/CommentSummary';
 import LiveDateTime from '../analytics/LiveDateTime';
 import { fetchCommentsData } from '../components/ApiService';
+import AgeHistogram from '../analytics/AgeHistogram';
+import BubbleMap from '../analytics/BubbleMap';
+import SankeyMap from '../analytics/Sankey';
+import KeyInsights from '../analytics/KeyInsights';
 
-// const Insights: React.FC = () => {
-//   // Datos de ejemplo
-//   const mockData = {
-//     totalComments: 120,
-//     sentimentDistribution: {
-//       positive: 20,
-//       neutral: 40,
-//       negative: 40,
-//     },
-//     keyComments: [
-//       { sentiment: 'positive', text: 'Great service and fast delivery!' },
-//       { sentiment: 'negative', text: 'Delivery time was way too long.' },
-//     ],
-//     sentimentByDay: [
-//       { positive: 2, negative: 4 }, // Día 1
-//       { positive: 4, negative: 2 }, // Día 2
-//       { positive: 6, negative: 0 }, // Día 3
-//       { positive: 6, negative: 8 }, // Día 4
-//       { positive: 5, negative: 4 }, // Día 5
-//       { positive: 2, negative: 4 }, // Día 1
-//       { positive: 4, negative: 2 }, // Día 2
-//     ],
-
-    
-//   };
-
-/// Definimos el tipo para SentimentByDay
 // Definimos el tipo para SentimentByDay
 interface SentimentByDay {
   positive: number;
   negative: number;
 }
+
 
 const Insights: React.FC = () => {
   const [sentimentData, setSentimentData] = useState<{
@@ -120,7 +92,6 @@ const Insights: React.FC = () => {
     getCommentsData();
   }, []);
 
-
    // Función para invertir los días: Día 0 = más reciente, Día 6 = hace 6 días
    const getReversedDayIndex = (date: Date) => {
     const today = new Date();
@@ -128,20 +99,6 @@ const Insights: React.FC = () => {
     const diffDays = Math.floor(diffTime / (1000 * 3600 * 24)); // Calculamos los días de diferencia
     return 6 - diffDays; // Invertimos el índice (6 = hoy, 5 = ayer, etc.)
   };
-
-  // const [chartType, setChartType] = useState<string>('bar'); // Estado para el tipo de gráfico seleccionado
-
-  // // Función para actualizar el tipo de gráfico seleccionado
-  // const handleChartTypeSelect = (type: string) => {
-  //   setChartType(type);
-  // };
-
-  // Función para actualizar filtros
-  const handleFilterChange = (key: string, value: string) => {
-    console.log(`Filter ${key} updated with value: ${value}`);
-  };
-
-  
 
   // Función para calcular el comportamiento (0, 1, 2)
   const calculateBehavior = (data: { positive: number; negative: number }[]) => {
@@ -176,64 +133,68 @@ const Insights: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-100 text-gray-900 flex flex-col">
       {/* Fijamos el DashboardHeader en la parte superior */}
-      <div className="sticky top-0 z-10 bg-gray-900 text-yellow-500">
-        <DashboardHeader />
+      <div className="sticky top-0 z-10 bg-gray-900 text-yellow-500 flex justify-between items-center p-4">
+        {/* LiveDateTime a la izquierda */}
+        <div className="flex-2">
+          <LiveDateTime />
+        </div>
+
+        {/* SummaryCards en el centro */}
+        <div className="flex-1 flex justify-center text-black">
+          <SummaryCards
+            totalComments={sentimentData.totalComments}
+            sentimentScores={sentimentData.sentimentDistribution}
+          />
+        </div>
+
+        {/* Botón de exportar a la derecha */}
+        <div className="ml-4">
+          <button className="bg-yellow-500 text-gray-900 px-4 py-2 rounded">Exportar</button>
+        </div>
       </div>
+
 
       <div className="flex flex-grow">
-        {/* Sección izquierda fija */}
-        <div className="w-96 bg-gray-200 text-yellow-500 p-4 sticky top-16 h-screen overflow-y-auto"> {/* Barra lateral fija */}
-          <LiveDateTime />
-          <div className="mt-4">
-            <Filters onFilterChange={handleFilterChange} />
-          </div>
+  <div className="flex-1 p-6 h-screen overflow-hidden">
+    <div className="px-0 w-full h-full flex">
+
+      {/* Sección izquierda: CommentSummary y BubbleMap */}
+      <div className="flex flex-col w-1/3 h-full space-y-6">
+        <div className="flex-1">
+          <CommentSummary
+            totalComments={sentimentData.totalCommentsSem}
+            sentimentData={sentimentData.sentimentByDay}
+            behaviorData={behaviorData}
+          />
         </div>
-
-        {/* Sección derecha ajustada a la pantalla */}
-        <div className="flex-1 p-6 h-screen overflow-hidden"> {/* h-screen asegura que la sección ocupe toda la pantalla */}
-          {/* Contenedor principal */}
-          <div className="container mx-auto px-6 w-full flex flex-col">
-            {/* Tarjetas de Resumen */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-              <SummaryCards
-                totalComments={sentimentData.totalComments}
-                sentimentScores={sentimentData.sentimentDistribution}
-              />
-            </div>
-
-             {/*Resumen de Comentarios con gráfico*/}
-            <div className="mb-6">
-              <CommentSummary
-                totalComments={sentimentData.totalCommentsSem}
-                sentimentData={sentimentData.sentimentByDay}
-                behaviorData={behaviorData}// Pasamos el comportamiento calculado
-              />
-   
-            </div>
-
-            {/* Selector de tipo de gráfico */}
-            {/* <div className="mb-4">
-              <ChartTypeSelector onSelect={handleChartTypeSelect} selectedType={chartType} />
-            </div> */}
-
-            {/* Gráfico de Sentimientos */}
-            {/* <div className="mb-4 max-w-md mx-auto h-16"> 
-              <SentimentCharts sentimentDistribution={mockData.sentimentDistribution} chartType={chartType} />
-            </div> */}
-
-            {/* Comentarios clave */}
-            {/* <div className="mb-4">
-              <KeyInsights keyComments={mockData.keyComments} />
-            </div> */}
-
-            {/* Botón de Exportación */}
-            {/* <div className="flex justify-center mt-4">
-              <ExportButton />
-            </div> */}
-
-          </div>
+        <div className="flex-1">
+          <BubbleMap />
         </div>
       </div>
+
+      {/* Sección central: KeyInsights */}
+      <div className="flex-1 w-1/3 h-full">
+        <KeyInsights />
+      </div>
+
+      {/* Sección derecha: SankeyMap y AgeHistogram */}
+      <div className="flex flex-col w-1/3 h-full space-y-6">
+        <div className="flex-1">
+          <SankeyMap />
+        </div>
+        <div className="flex-1">
+          <AgeHistogram />
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
     </div>
   );
 };

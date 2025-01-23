@@ -63,7 +63,7 @@ const LiveGreeting: React.FC = () => {
 
       <h2 className="text-2xl font-bold mb-4 text-center text-yellow-500">{formatGreeting()}</h2>
 
-      <div className="text-center">
+      {/* <div className="text-center">
         <p className="text-yellow-500 text-lg font-medium mb-2">Fecha Actual</p>
         <p className="text-yellow-500 text-xl font-semibold">{formatDate()}</p>
       </div>
@@ -71,7 +71,16 @@ const LiveGreeting: React.FC = () => {
       <div className="text-center mt-2">
         <p className="text-yellow-500 text-lg font-medium mb-2">Hora Actual</p>
         <p className="text-yellow-500 text-2xl font-bold">{formatTime()}</p>
+      </div> */}
+
+      <div className="text-center">
+        <p className="text-yellow-500 text-lg font-medium mb-2">
+
+          Fecha: {formatDate()} <br />
+          Hora: {formatTime()}
+        </p>
       </div>
+
     </div>
   );
 };

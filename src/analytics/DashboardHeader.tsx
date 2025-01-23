@@ -1,13 +1,12 @@
 import React from 'react';
+import LiveGreeting from './LiveDateTime'; // Asegúrate de que el archivo esté en la misma carpeta
 
 const DashboardHeader: React.FC = () => {
   return (
-    <header className="bg-gray-800 text-white p-4 shadow-md">
-      <h1 className="text-2xl font-bold">Customer Feedback Dashboard</h1>
-      <p className="text-sm text-gray-300 mt-1">
-        Analyze and improve your services based on user feedback.
-      </p>
-    </header>
+    <div className="pl-4 pr-4 pt-4 pb-6">
+      {/* Aquí se integra el componente LiveGreeting */}
+      <LiveGreeting />
+    </div>
   );
 };
 
