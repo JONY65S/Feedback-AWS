@@ -7,7 +7,10 @@ interface FiltersProps {
 const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
   const [periodType, setPeriodType] = useState('custom'); // 'custom' o 'fixed'
   const [selectedCountry, setSelectedCountry] = useState('');
+  const [selectedState, setSelectedState] = useState('');
+  const [selectedCity, setSelectedCity] = useState('');
   const [states, setStates] = useState<string[]>([]);
+  const [cities, setCities] = useState<string[]>([]);
 
   const countries = [
     { name: 'México', states: ['Ciudad de México', 'Jalisco', 'Nuevo León'] },
@@ -15,20 +18,49 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
     { name: 'Canadá', states: ['Ontario', 'Quebec', 'British Columbia'] },
   ];
 
+  // Diccionario de ciudades por estado
+  const citiesOptions: { [key: string]: string[] } = {
+    'Ciudad de México': ['CDMX', 'Nezahualcóyotl', 'Tlalnepantla'],
+    Jalisco: ['Guadalajara', 'Zapopan', 'Tlaquepaque'],
+    'Nuevo León': ['Monterrey', 'San Pedro', 'Guadalupe'],
+    California: ['Los Angeles', 'San Francisco', 'San Diego'],
+    Texas: ['Houston', 'Dallas', 'Austin'],
+    Florida: ['Miami', 'Orlando', 'Tampa'],
+    Ontario: ['Toronto', 'Ottawa', 'Mississauga'],
+    Quebec: ['Montreal', 'Quebec City', 'Laval'],
+    'British Columbia': ['Vancouver', 'Victoria', 'Burnaby'],
+  };
+
   const handleCountryChange = (country: string) => {
     setSelectedCountry(country); // Almacena el valor del país seleccionado
     const countryStates = countries.find((c) => c.name === country)?.states || [];
     setStates(countryStates);
-    onFilterChange('country', country); // Utiliza el valor de selectedCountry aquí
-    onFilterChange('state', ''); // Reset state when country changes
+    setSelectedState('');
+    setCities([]);
+    onFilterChange('country', country);
+    onFilterChange('state', '');
+    onFilterChange('city', '');
+    selectedCity;
     selectedCountry;
+    selectedState
   };
-  
+
+  const handleStateChange = (state: string) => {
+    setSelectedState(state);
+    const stateCities = citiesOptions[state] || [];
+    setCities(stateCities);
+    setSelectedCity('');
+    onFilterChange('state', state);
+    onFilterChange('city', '');
+  };
 
   const handleClearFilters = () => {
     setPeriodType('custom');
     setSelectedCountry('');
+    setSelectedState('');
+    setSelectedCity('');
     setStates([]);
+    setCities([]);
     onFilterChange('startDate', '');
     onFilterChange('endDate', '');
     onFilterChange('fixedPeriod', '');
@@ -36,6 +68,7 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
     onFilterChange('category', '');
     onFilterChange('country', '');
     onFilterChange('state', '');
+    onFilterChange('city', '');
   };
 
   return (
@@ -122,6 +155,21 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
           </select>
         </div>
 
+        {/* Edad */}
+        <div>
+          <label className="text-yellow-500 font-medium">Edad</label>
+          <select
+            className="border border-gray-700 p-1 rounded w-full mt-2 bg-gray-800 text-yellow-500 focus:ring-2 focus:ring-yellow-500"
+            onChange={(e) => onFilterChange('age', e.target.value)}
+          >
+            <option value="">Seleccione un rango de edad</option>
+            <option value="18-25">18-25</option>
+            <option value="26-35">26-35</option>
+            <option value="36-45">36-45</option>
+            <option value="46+">46+</option>
+          </select>
+        </div>
+
         {/* País */}
         <div>
           <label className="text-yellow-500 font-medium">País</label>
@@ -143,7 +191,7 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
           <label className="text-yellow-500 font-medium">Estado</label>
           <select
             className="border border-gray-700 p-1 rounded w-full mt-2 bg-gray-800 text-yellow-500 focus:ring-2 focus:ring-yellow-500"
-            onChange={(e) => onFilterChange('state', e.target.value)}
+            onChange={(e) => handleStateChange(e.target.value)}
             disabled={!states.length}
           >
             <option value="">Seleccione un estado</option>
@@ -154,6 +202,25 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
             ))}
           </select>
         </div>
+
+        {/* Ciudad */}
+        <div>
+          <label className="text-yellow-500 font-medium">Ciudad</label>
+          <select
+            className="border border-gray-700 p-1 rounded w-full mt-2 bg-gray-800 text-yellow-500 focus:ring-2 focus:ring-yellow-500"
+            onChange={(e) => onFilterChange('city', e.target.value)}
+            disabled={!cities.length}
+          >
+            <option value="">Seleccione una ciudad</option>
+            {cities.map((city) => (
+              <option key={city} value={city}>
+                {city}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        
       </div>
 
       {/* Botones */}
