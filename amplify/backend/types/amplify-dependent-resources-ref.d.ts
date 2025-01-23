@@ -1,10 +1,4 @@
 export type AmplifyDependentResourcesAttributes = {
-  "api": {
-    "insightful": {
-      "GraphQLAPIEndpointOutput": "string",
-      "GraphQLAPIIdOutput": "string"
-    }
-  },
   "auth": {
     "insightful71f71637": {
       "AppClientID": "string",
@@ -14,12 +8,6 @@ export type AmplifyDependentResourcesAttributes = {
       "UserPoolArn": "string",
       "UserPoolId": "string",
       "UserPoolName": "string"
-    }
-  },
-  "storage": {
-    "feedbackInsight": {
-      "BucketName": "string",
-      "Region": "string"
     }
   }
 }
